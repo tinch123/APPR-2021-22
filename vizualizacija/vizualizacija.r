@@ -5,8 +5,6 @@ library(tmap)
 
 
 
-ggplot(stack())
-
 #Graf, ki prikazuje gibanje povprečnega letnega indeksa v Sloveniji
 tabela1 <- slovenija_mesecno %>% group_by(Leto) %>% summarize("Povprečni letni indeks" =mean(`Povprečni letni indeks`))
 graf1 <- ggplot(tabela1, aes(x=Leto)) +
@@ -15,9 +13,6 @@ graf1 <- ggplot(tabela1, aes(x=Leto)) +
   ggtitle("Povprečni letni inflacijski indeks v Sloveniji") 
 
 graf1
-
-dev.off()
-
 
 #Graf, ki primerja povprečne indekse cen Europske unije in Slovenije za leta 2015-2022
 tabela2 <- evropa %>% na.omit() %>% group_by(Leto, TIME) %>% summarize("Indeks" =mean(`indeks`)) %>% filter(Leto %in% c(2022,2021,2020,2019,2018,2017,2016,2015), TIME %in% c("EU_povprečje", "Slovenia"))
@@ -30,13 +25,10 @@ graf2 <- ggplot(tabela2, aes(x=Leto, y=Indeks, fill=TIME))+ geom_bar(stat="ident
   # xlab()+
   ggtitle("Primerjava povprečnega inflacijskega indeksa EU in Slovenije")+
   labs(fill= "Države")
- graf2 
+graf2 
 
 #Graf, ki prikazuje gibanje povprečnega indeksa na različnih področjih v EU
 tabela4 <- evropa_indeks %>% group_by(Leto, Sektorji) %>% summarize("Indeks" =mean(`indeks`)) %>% filter(Leto %in% c(2022,2021,2020,2019,2018))
-#ggplot(tabela4, aes(x=Leto, y =Indeks), group=Sektorji)+
-#  geom_line(aes(color=Sektorji, linetype=Sektorji),lwd=1.1)+ 
-#  scale_color_manual(values = c("darkred", "steelblue","red","blue","green","black","yellow","purple","orange","pink","brown","darkgreen"))
 graf3 <- ggplot(data=tabela4, aes(x=Leto, y=Indeks, group=Sektorji, colour=Sektorji)) +
   geom_line() +
   geom_point()+
@@ -68,15 +60,15 @@ names(evropadrzave)
 
 #Zemljevid, ki prikazuje indeks cen za Evropo leta 2022
 evropa2 <- read_csv2("podatki/evropa11.csv", skip=,
-                    locale=locale(encoding="Windows-1250"))
+                     locale=locale(encoding="Windows-1250"))
 evropa2 <- evropa2[-c(1:7,35),]
 evropa2 <- evropa2 %>% pivot_longer(cols=2:270, names_to = "čas", values_to="indeks") %>% 
   separate(čas, sep="-", into=c("Leto", "Mesec"))
 evr_cene <- evropa2 %>% group_by(Leto) %>% select(TIME, indeks) %>% filter(Leto == 2022)
-evr_cene <- evr_cene  %>% drop_na()
+evr_cene <- evr_cene  %>% na.omit()
 evr_cene <- aggregate(x=evr_cene$indeks, 
-                       by = list(evr_cene$TIME),
-                       FUN=mean)
+                      by = list(evr_cene$TIME),
+                      FUN=mean)
 evr_cene[11,1] <- "Germany"
 evr_cene[6,1] <- "Czech Rep."
 
@@ -101,8 +93,8 @@ evropa3 <- evropa3 %>% pivot_longer(cols=2:270, names_to = "čas", values_to="in
 evr_cene2 <- evropa3 %>% group_by(Leto) %>% select(TIME, indeks) %>% filter(Leto == 2008)
 evr_cene2 <- evr_cene2  %>% drop_na()
 evr_cene2 <- aggregate(x=evr_cene2$indeks, 
-                      by = list(evr_cene2$TIME),
-                      FUN=mean)
+                       by = list(evr_cene2$TIME),
+                       FUN=mean)
 evr_cene2[11,1] <- "Germany"
 evr_cene2[6,1] <- "Czech Rep."
 
@@ -135,3 +127,4 @@ zemljevid.evrope3 <- function(){
   return(evrop3)
 }
 zemljevid.evrope3()
+
