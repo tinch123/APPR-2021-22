@@ -12,16 +12,22 @@ runtime: shiny
 
 ```{r setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
-
 # Uvoz vseh potrebnih knjižnic
 source("lib/libraries.r", encoding="UTF-8")
 ```
 
+```{r rstudio, results='asis'}
+# Izris povezave do RStudia na Binderju
+source("lib/rstudio.r", encoding="UTF-8")
+```
 
-## Izbira teme
-Pri tem projektu sem analizirala
 
-***
+## Analiza indeksa inflacije v Sloveniji in Evropi
+Pri tem projektu sem analizirala inflacijske indekse in indekse cen v Evropskih državah (ter v nekaterih tabelah še drugih državah, na primer ZDA, Argentina...). Analizirala sem rast poovprečnega letnega indeksa cen v Sloveniji. Potem sem primerjala povprečne indekse cen Slovenije in Evropske Unije. Nato sem prikazala še gibanje cen in inflacijskega indeksa za življenske potrebščine v Sloveniji in Evropi. Na zemljevidu sem prikazala indekse cen za leto 2008(ko je bila finančna kriza) in 2022(mislim, da ne rabim posebej razlagati zakaj...) ter zemljevid, ki prikazuje inflacijski indeks (v procentnih točkah) za hrano in nealkoholne pijače za leto 2021 glede na 2020.
+Podatke sem dobila iz [Statističnega urada republike Slovenije](https://www.stat.si/StatWeb/), [Eurostata](https://ec.europa.eu/eurostat/databrowser/view/PRC_HICP_CTRB/default/table?lang=en&category=prc.prc_hicp) in iz [OECD Stat](https://stats.oecd.org/index.aspx?queryid=82187).
+
+
+
 
 ## Obdelava, uvoz in čiščenje podatkov
 
@@ -29,24 +35,130 @@ Pri tem projektu sem analizirala
 source("uvoz/uvoz.r", encoding="UTF-8")
 ```
 
-***
+V tej fazi obdelave podatkov, sem uvozila tabele. Vse so bile v CSV obliki, nato sem jih uredila v tidy data.
 
+1. $\color{BLACK}{\text{SLOVENIJA MESEČNO }}$ 
+
+  - `Leto` - leto meritve (število)
+  - `Mesec` - mesec meritve indeksov (besedilo)
+  - `Mesečni indeks (mesec / prejšnji mesec)` - mesečni indeks inflacije (število)
+  - `Letni indeks (mesec / isti mesec prejšnjega leta)` - Letni indeks inflacije (število)
+  - `Mesečni indeks (mesec / prejšnji mesec)` - mesečni indeks inflacije (število)
+  
+ 
+2. $\color{BLACK}{\text{INDEKSI CEN V EVROPI}}$ 
+  - `TIME` - predstavlja različne države (besedilo)
+  - `Leto` - leto meritve indeksov cen (besedilo)
+  - `Mesec` - mesec meritve indeksov cen (besedilo)
+  - `indeks` - velikost indeksa cen neke države določenega meseca in leta (število)
+  
+  
+3. $\color{BLACK}{\text{INDEKSI INFLACIJE NA RAZLIČNIH SEKTORJIH V EVROPSKIH DRŽAVAH}}$ 
+  - `Sektorji` - različne osnovne življenske potrebščine (besedilo)
+  - `Leto` - leto meritve (besedilo)
+  - `Mesec` - mesec meritve (besedilo)
+  - `indeks` - velikost inflacijskega indeksa Evrope na različnih področjih (število)
+  
+  
+4. $\color{BLACK}{\text{INDEKS CEN NA RAZLIČNIH SEKTORJIH V SLOVENIJI}}$ 
+  - `MERITVE`  -  različne meritve indeksov (besedilo)
+  - `SKUPINE` -  različne osnovne življenske potrebščine (besedilo)
+  - `LETO` - leto meritve (število)
+  - `Indeksi cen življenjskih potrebščin in letne stopnje rasti cen` - Indeksi cen življenjskih potrebščin in letne stopnje rasti cen (besedilo)
+
+  
+5. $\color{BLACK}{\text{INDEKS CENE ZA HRANO IN NEALKOJOLNE PIJAČE}}$ 
+  - `Country`  - Države (besedilo)
+  - `Subject` - hrana in nealkoholna pijača (besedilo)
+  - `Time` - leto meritve cen (število)
+  - `Value` - vrednosti indeksa cen (število)
+
+      
+    
+  
 ## Analiza in vizualizacija podatkov
-
+ 
 ```{r vizualizacija, results='hide'}
 source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 ```
 
-***
+Osrednji cilj analize podatkov je na podlagi empiričnih podatkov dobiti neko ugotovitev. 
+Najprej sem narisala graf, ki prikazuje gibanje povprečnega letnega indeksa v Sloveniji na podlagi tabele slovenija_mesečno, za vsa leta, ki so bila na voljo
+
+```{r graf1, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf1)
+```
+
+
+Vidi se, da je bil indeks najvišji leta 2001. Najnižji je bil leta 2015, leta 2022 pa se je verjetno zaradi posledic COVID-19 in kakšnih drugih družbeno-geografskih kriz(npr. vojna) ta spet zelo povečal in je višje kot je bil kadarkoli od leta 2006 dalje.
+
+Nato sem narisala graf, ki primerja povprečne indekse cen Europske unije in Slovenije za leta 2015-2022.
+
+
+```{r graf2, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf2)
+```
+
+Opaziti je mogoče, da je Slovenija v vseh analiziranih letih pod EU povprečjem. Prav tako se vidi, da se inflacijski indeks v EU in Sloveniji z leti viša.
+
+Nato sem narisala graf, ki prikazuje gibanje povprečnega indeksa na različnih področjih v EU. Oziroma gibanje povprečnega indeksa cen v Evropi za različne osnovne življenske potrebščine.
+
+
+```{r graf3, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf3)
+```
+Vidi se, da je leta 2022 indeks cen na vseh področjih zelo narasel, še posebej se to pozna na stanovanjih, vodi, električni energiji, plini in drugega goriva (razlog vojna in da se vedno bolj "nalaga" v nepremičnine) in prav tako se velik narast pozna naceni prevoza, za kar je prav tako neposredno kriv dvig cen goriva.
+Nato sem analizirala še  gibanje cen življenskih potrebščin v Sloveniji.
+
+```{r graf4, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf4)
+```
+Tudi tukaj v zadnjem letu vidimo rast cen hrane, pijače, zdravstva prevoza ter predvsem v prevozu (ki je leta 2020 precej pade zaradi padca cen goriva in nafte med korono). Trend je toraj podoben kot je bil povprečno v evropskih državah. Vidimo pa, da je v zadnjem letu padla cena za rekreacijo ali kulturo (najbrž zato, ker letos ni več turističnih bonov) in pa za komunikacije.
+
+Nato sem naredila še tri zemljevide. Prvi je zemljevid, ki prikazuje indeks cen za Evropo leta 2022 (ter še za ZDA).
+
+```{r zemljevid.evrope, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.cap='Zemljevid 1'}
+ zemljevid.evrope()
+```
+Vidimo, da predvsem izstopa Turčija, kjer je indeks cen leta 2022 narasel na preko 200! 
+Drugi zemljevid sem naredila za primerjavo s prvim. In sicer sem ga naredila za indeks cen leta 2008, ko je bila finančna kriza. Zanimalo me je kako se bo primerjal s prejšnjim grafom oziroma ali je bila inflacija takrat tako visoka kot je letos. Uporabila sem enake intervale za gradiente, tako da bi, če bi bilo to res, morale se barve zemljevidov ujemati.
+
+```{r zemljevid.evrope2, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.cap='Zemljevid 2'}
+ zemljevid.evrope2()
+```
+Vendar vidimo, da temu ni tako in da je bil indeks cen leta 2008 predvsem manjši kot je letos. Morda bi bilo bolje da bi primerjala stopnje rasti cen glede na prejšnje leto, saj so verjetno bile cene leta 2008 nižje kot so leta 2022, in bi bila primerjava bolj logična, če bi primerjala rast glede na prejšnji leti.
+
+Nato sem naredila še zemljevid, ki prikazuje inflacijski indeks (v procentnih točkah) za hrano in nealkoholne pijače za leto 2021 glede na 2020. Vedno bolj se v trgovinah namreč pozna, kako rastejo cene blaga, zato me je to še posebej zanimalo. In sicer sem to preverjala za Evropo, 
+
+```{r zemljevid.evrope3, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.cap='Zemljevid 3'}
+ zemljevid.evrope3()
+```
+Inflacijski indeks se je kot pričakovano glede na prejšnji graf zelo povišal v Turčiji, še bolj pa se je v Argentini, kar pa žal ne moremo primerjati s prejšnjim grafom, saj tam nimamo podatkov za Argentino. Vidimo, da se je inflacijski indeks znižal na Norveškem.
+
 
 ## Napredna analiza podatkov
 
 ```{r analiza}
 source("analiza/analiza.r", encoding="UTF-8")
 ```
+Na koncu sem naredila še 2 napovedi s kvadratno regresijo. Najprej sem naredila napoved za povprečni mesečni indeks cen v Sloveniji za leti 2023 in 2024
 
-***
+```{r graf_regres, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf_regres)
+```
+
+Napovedani vrednosti sta na grafu označeni z rdečima točkama in kvadratna regresija napoveduje, da se bo naslednji dve leti povprečni mesečni indeks cen spet povišal (v obeh dveh letih).
+Nato sem naredila še npoved po mesecih za leto 2022. Na žalost so na SURSU podatki samo do aprila, tako da je sta napovedi narejeni za mesec maj in junij.
+
+```{r graf_regres2, echo=FALSE, message=FALSE, fig.align='center', warning = FALSE}
+print(graf_regres2)
+```
+Tudi tukaj se napoveduje, da bo indeks cen v naslednjih dveh mesecih v Sloveniji narasel. Napovedi sta spet narisani z dvema rdečima točkama na grafu.
+
+
 
 ```{r shiny}
-#shinyAppDir("shiny", options=list(width="100%", height=600))
+shinyAppDir("shiny", options=list(width="100%", height=600))
 ```
+
+
