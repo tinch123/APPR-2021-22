@@ -6,7 +6,7 @@ library(mgcv)
 
 #Napovedi s kvadratno regresijo
 
-#Napoved za povprečni mesečni indeks cen v Sloveniji za leti 2023 i
+#Napoved za povprečni mesečni indeks cen v Sloveniji za leti 2023 in 2024
 slovenija_mesec_indeks <- slovenija_mesecno %>% filter(Leto %in% c(2022,2021,2020,2019,2018,2017,2016,2015,2014)) %>% select(Leto, Mesec,`Mesečni indeks (mesec / prejšnji mesec)`)
 slovenija_mesec_indeks <- aggregate(x=slovenija_mesec_indeks$`Mesečni indeks (mesec / prejšnji mesec)`, 
                        by = list(slovenija_mesec_indeks$Leto),
